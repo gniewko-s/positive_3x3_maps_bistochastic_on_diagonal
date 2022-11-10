@@ -38,7 +38,10 @@ def plot(a,b,c):
 	phi += np.pi/2
 	XE = [r*np.cos(phi),	r*np.cos(phi+2*np.pi/3),	r*np.cos(phi-2*np.pi/3)]
 	YE = [r*np.sin(phi),	r*np.sin(phi+2*np.pi/3),	r*np.sin(phi-2*np.pi/3)]
-	return XV,YV,XE,YE
+	r = (a+b+c-((a-2*b-2*c)**2+3*(b-c)**2)**.5)/6**.5
+	XP = r*np.cos(np.linspace(0,2*np.pi,601)) 
+	YP= r*np.sin(np.linspace(0,2*np.pi,601))
+	return XV,YV,XE,YE,XP,YP
 
 fig, ax = plt.subplots()
 ax.set_ylim((-1.35,2.6))
@@ -53,9 +56,10 @@ for x,y,t in ((0, 1.5**.5,'$d=1$'),(3**.5*1.5**.5/2,-.5*1.5**.5,'$e=1$'),(-3**.5
 
 ai = 3; bi = 0; ci = 0;
 si1 = ai+bi+ci; si2 = bi+ci; si3 = bi-ci;
-XV,YV,XE,YE = plot(ai,bi,ci)
+XV,YV,XE,YE,XP,YP = plot(ai,bi,ci)
 V, = ax.plot(XV,YV,'b')
-E = [ax.plot(X,Y,'r')[0] for X,Y in zip(XE,YE)] 
+E = [ax.plot(X,Y,'r')[0] for X,Y in zip(XE,YE)]
+P, =  ax.plot(XP,YP,'g')
 
 fig.subplots_adjust(left=0.25, bottom=0.2)
 ax.set_title(f'$a = {ai:.2f}, b = {bi:.2f}, c = {ci:.2f}, \sqrt{{bc}}+a-2 = {(bi*ci)**.5+ai-2:.2f}$',y=1.1, pad=-14)
@@ -96,9 +100,11 @@ def update_3(val):
 def redraw(s1,s2,s3):
 	global V,E
 	b = (s2+s3)/2; c = (s2-s3)/2; a = s1-s2
-	XV,YV,XE,YE = plot(a,b,c)
+	XV,YV,XE,YE ,XP,YP= plot(a,b,c)
 	V.set_xdata(XV)
 	V.set_ydata(YV)
+	P.set_xdata(XP)
+	P.set_ydata(YP)
 	for e,x in zip(E,XE):
 		e.set_xdata(x)
 	for e,y in zip(E,YE):
@@ -109,4 +115,3 @@ def redraw(s1,s2,s3):
 slider1.on_changed(update_1); slider2.on_changed(update_2); slider3.on_changed(update_3)
 
 plt.show()
-
